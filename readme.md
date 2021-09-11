@@ -103,8 +103,53 @@ EF COre 5.0 Many-to-Many Relationships
 	- Deployment
 
 
-#  Assignments
+# Programming With ASP.NET COre 5
+1. Security Fearures in Project Template
+	- None: Anonymous Authentication. (Can be changed in future by adding code)
+	- Individual User Authentication: The User Based Security by default by adding ASP.NET COre Razor View Assembly in Project for Views for Login,Register, Forget PAssword, Conf9orm PAssword, etc.
+	- Microsoft Identity Platform (New in .NET 5)
+		- The API Mdeol offered by Microsoft to integrate ASP.NET COre 5 with Azure AD (AAD)
+	- WIndows
+		- Local Windows AD Users
+2. Frameworks
+	- Microsoft.NetCore.App
+		- .NET 5 APplication Model
+	- Microsoft.AspNetCore.App
+		- ASP.NET Core 5 Ecosystem
+		- Pgaes, Controllers, Dependency Injection, Identity, Sessions, Caching, JSON Serialization, etc.
+		- Host
+		- Services
+		- Middlewares
+	- Microsoft.AspNetCore.Identity.EntityFrameworkCore
+		- PAckage to Manages the User and Roles Security using EF Core
+	- Microsoft.AspNetCore.Identity.UI
+		- THe Razor Library that contains Pages and COde for Identity Management
+			- e.g. Users Management, Login and other Identity Models
+3. Generating MVC Veiws
+	- WebCodeGebnerator Module
+		- Generates (or Scaffold) views, they are Razor Views
+		- RazorPage<TModel>
+			 - TModel, is the 'typeof' Model class pass to View when the View is generated
+			 - Razor View Templates for MVC
+				- List, Accepts IEnumerable of Model class
+				- Create, Accepts an EMpty Model clas
+				- Edit, Accepts model class with data to be Edited
+				- Delete, Accepts a read-onlly model class with values to be deleted
+				- Details, Accepts a read-onlly model class with values as read-only
+				- Empty(with model), an empty razor view, provoides freedom to design UI
+             - Properties of RazorView
+				- Model of type TModel, represents model class pass to view based on template
+				- ViewData, of the type ViewDataDictionary, represents data to be passed from Controller to view other than model class properties
 
+- MOdifyng Model classes for validations 
+	- MOdify the actula class and apply the custom validator on it
+		- THis will be challanging if the Model entity classes are not accessible for any code changes
+		- If you can change the Model classes, the creat a custom validator class by deriving it from 'ValidationAttribute' class from SYstem.ComponentModel.DataAnnotation 
+- INstead of Modifying the Model class for Validation using Attributes, thor the exception from the action method
+
+
+#  Assignments
+	
 # Day 1: Date: 04-09-2021
 
 1. Use EF Core Code-First Approach to Create Vendors and Products,Catgories Tabales
@@ -112,3 +157,10 @@ EF COre 5.0 Many-to-Many Relationships
 	- Vendor Can Supply Multiple Products of Multiple Categories
 	- USe the DbCOntext and DbSet to perform CRUD Operations for all these tables
 	- Perform Operations using Repositories (IService Interface and Service Classes)
+
+# Day 2 : Date: 11-09-2021
+1. Create a EmployeeController with all its action method like Index, Create, Edit and Delete  with Validations. The Create View for EMployee Must contains Select Element (DropDown) to shlow list of Department Names. When the DeptName is selected from select element, the DeptNo must be added for the Employee. (30)
+2. Salary for the Employee Cannot be -ve. (5)
+3. Modify the Department Table by adding a new column as Capacity. When the Department Record is created set the value for the Capacity. Make sure that when the new employee is added in that department if the capacity is excedding, the throw the capacity full exception.
+	e.g. If IT Departments is having Capacity is 20 and if there are already 20 employes for the department, then when new employee is added in IT department, then throw capacity full exception (45 mins)
+4. CReate a View that will show List of Departments in one table and List of EMployees in another table. When a Department is selected from Department Table then Employee table should sho only those employee for thje selected department.    	 (30 mins)
