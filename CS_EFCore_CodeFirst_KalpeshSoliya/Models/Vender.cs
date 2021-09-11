@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CS_EFCore_CodeFirst_KalpeshSoliya.Models
 {
     public class Vender
     {
 		[Key]
+		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int VenderRowId { get; set; }
 		[Required]
 		[StringLength(50)]
@@ -17,6 +16,7 @@ namespace CS_EFCore_CodeFirst_KalpeshSoliya.Models
 		[StringLength(200)]
 		public string VenderName { get; set; }
 		// Many-To-Many Relatioship
-		public ICollection<Products> Products { get; set; }
+		//public ICollection<Productt> Products { get; set; }
+		public ICollection<VendorProduct> VendorProducts { get; set; }
 	}
 }

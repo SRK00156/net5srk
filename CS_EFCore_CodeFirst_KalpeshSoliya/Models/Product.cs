@@ -10,6 +10,7 @@ namespace CS_EFCore_CodeFirst_KalpeshSoliya.Models
 {
 	public class Products
 	{
+		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int ProductRowId { get; set; }
 		[Required]
@@ -24,6 +25,9 @@ namespace CS_EFCore_CodeFirst_KalpeshSoliya.Models
 		// The One-To-One Relatioship
 		public Category Categtory { get; set; }
 		// Many-To-Many Relatioship
-		public ICollection<Vendors> Vendors { get; set; }
+		//public ICollection<Vender> Venders { get; set; }
+		
+		// Many-To-Many Relatioship
+		public ICollection<VendorProduct> VendorProducts { get; set; }
 	}
 }
