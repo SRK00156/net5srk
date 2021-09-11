@@ -1,0 +1,41 @@
+﻿@using Core.DataAccess.Models  
+@model Core.DataAccess.Models.Department
+@{
+    ViewData["Title"] = "ListDept";
+    // read departments data from View
+    var departments = ViewBag.Departments;
+}
+
+<h1>Showing the DeptName into DropDown Lisrt aka HTML Select Elements</h1>
+<h5>
+	Using asp-items helper, it will iteratove over the collection of the type
+	<br />
+	SelectList which accept Following parameters
+	SelectLis(Collection, "datavaluefiled", "datatextfield")
+	<br />
+	datavaluefield: the value that is selected from select element
+	datatextfield: the value that is displayed in UI for options in select element
+
+</h5>
+
+<div class="container">
+    <strong>List of Department Names</strong>
+    <select asp-items='@new SelectList((IEnumerable<Department>)departments, "DeptNo", "DeptName")'></select>
+</div>
+<hr />
+
+<form asp-action="ListDept">
+	<strong>List of Department Names</strong>
+	<select asp-for="DeptNo"  asp-items='@new SelectList((IEnumerable<Department>)departments, "DeptNo", "DeptName")'></select>
+	<input type="submit" value="Show DeptNo"/>
+</form>
+<hr />
+<div class="container">
+	<strong>
+		Selected DeptNo is = @ViewBag.DeptNo
+	</strong>
+	<br />
+	<strong>
+		Selected DeptName is = @ViewBag.DeptName
+	</strong>
+</div>

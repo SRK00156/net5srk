@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31624.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CS_App_30", "CS_App_30\CS_App_30.csproj", "{007FF245-8CB1-4247-9EEF-8B2A0E9369B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CS_App_30", "CS_App_30\CS_App_30.csproj", "{007FF245-8CB1-4247-9EEF-8B2A0E9369B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CS_App_50", "CS_App_50\CS_App_50.csproj", "{FB17D211-E5E4-4C69-9163-14B3A390E866}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CS_App_50", "CS_App_50\CS_App_50.csproj", "{FB17D211-E5E4-4C69-9163-14B3A390E866}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CS_Frwk", "CS_Frwk\CS_Frwk.csproj", "{AF939CBC-4357-4E7D-9D40-8DA2BE679934}"
 EndProject
@@ -14,9 +14,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		readme.md = readme.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CS_EFCore_DbFirst", "CS_EFCore_DbFirst\CS_EFCore_DbFirst.csproj", "{613F620A-8A1E-4990-A21E-0FD3F129F88B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CS_EFCore_DbFirst", "CS_EFCore_DbFirst\CS_EFCore_DbFirst.csproj", "{613F620A-8A1E-4990-A21E-0FD3F129F88B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CS_EF_Code_First", "CS_EF_Code_First\CS_EF_Code_First.csproj", "{689717C3-713B-4065-9C5A-ED08225D3923}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CS_EF_Code_First", "CS_EF_Code_First\CS_EF_Code_First.csproj", "{689717C3-713B-4065-9C5A-ED08225D3923}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core_WebApp", "Core_WebApp\Core_WebApp.csproj", "{DEB92523-DFE2-4E2C-8EE4-EAEB1C8678D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.DataAccess", "Core.DataAccess\Core.DataAccess.csproj", "{01723488-75D1-4896-A8BE-B5606418A84B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +48,14 @@ Global
 		{689717C3-713B-4065-9C5A-ED08225D3923}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{689717C3-713B-4065-9C5A-ED08225D3923}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{689717C3-713B-4065-9C5A-ED08225D3923}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEB92523-DFE2-4E2C-8EE4-EAEB1C8678D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEB92523-DFE2-4E2C-8EE4-EAEB1C8678D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEB92523-DFE2-4E2C-8EE4-EAEB1C8678D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEB92523-DFE2-4E2C-8EE4-EAEB1C8678D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01723488-75D1-4896-A8BE-B5606418A84B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01723488-75D1-4896-A8BE-B5606418A84B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01723488-75D1-4896-A8BE-B5606418A84B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01723488-75D1-4896-A8BE-B5606418A84B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
