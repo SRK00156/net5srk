@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using Core.DataAccess.Models;
 using Core.DataAccess.Services;
 using Core_WebApp.Models;
+using Microsoft.AspNetCore.Http;
+using Core_WebApp.CustomSessions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Core_WebApp.Controllers
 {
@@ -23,6 +26,8 @@ namespace Core_WebApp.Controllers
 	/// The ViewBag and ViewData, Properties to pass values from COntroller's Action Method top View and Back
 	/// The TempData , property used to pass data across controlers
 	/// </summary>
+	/// 
+	 
 	public class DepartmentController : Controller
 	{
 		// Dependency Injection of Department Service
@@ -41,6 +46,9 @@ namespace Core_WebApp.Controllers
 		/// and select Add View
 		/// </summary>
 		/// <returns></returns>
+		/// 
+		//[Authorize(Roles ="Admin,Manager,Clerk")]
+		[Authorize(Policy ="AllRolePolicy")]
 		public async Task<IActionResult> Index()
 		{
 			var depts = await deptServ.GetAsync();
@@ -51,6 +59,9 @@ namespace Core_WebApp.Controllers
 		/// Action Method  that will respons a view with Empty Department Object
 		/// </summary>
 		/// <returns></returns>
+		/// 
+		//[Authorize(Roles = "Admin,Manager")]
+		[Authorize(Policy = "AdminManagerPolicy")]
 		public IActionResult Create()
 		{
 			var dept = new Department();
@@ -65,8 +76,8 @@ namespace Core_WebApp.Controllers
 		[HttpPost]
 		public async Task<IActionResult> Create(Department department)
 		{
-			try
-			{
+			//try
+			//{
 				// check if the Model is Valid
 				if (ModelState.IsValid)
 				{
@@ -77,20 +88,20 @@ namespace Core_WebApp.Controllers
 				}
 				// if Model is not valid then Stay on Same page with Error Messages
 				return View(department);
-			}
-			catch (Exception ex)
-			{
-				// Ctach the exception and redirect to the Error page fro Views/Shared folder
-				return View("Error", new ErrorViewModel()
-				{
-					// read route expression to extract Current Executing Controller 
-					// and its  Action Method  
-					//The 'controller' expresion is read from Route Expression of Startup class 
-					ControllerName = RouteData.Values["controller"].ToString(),
-					ActionName = RouteData.Values["action"].ToString(),
-					ErrorMessage = ex.Message
-				}); 
-			}
+			//}
+			//catch (Exception ex)
+			//{
+			//	// Ctach the exception and redirect to the Error page fro Views/Shared folder
+			//	return View("Error", new ErrorViewModel()
+			//	{
+			//		// read route expression to extract Current Executing Controller 
+			//		// and its  Action Method  
+			//		//The 'controller' expresion is read from Route Expression of Startup class 
+			//		ControllerName = RouteData.Values["controller"].ToString(),
+			//		ActionName = RouteData.Values["action"].ToString(),
+			//		ErrorMessage = ex.Message
+			//	}); 
+			//}
 		}
 
 		/// <summary>
@@ -100,6 +111,9 @@ namespace Core_WebApp.Controllers
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
+		/// 
+		//[Authorize(Roles = "Admin")]
+		[Authorize(Policy = "AdminPolicy")]
 		public async Task<IActionResult> Edit(int id)
 		{
 			var dept = await deptServ.GetAsync(id);
@@ -114,8 +128,8 @@ namespace Core_WebApp.Controllers
 		[HttpPost]
 		public async Task<IActionResult> Edit(int id, Department department)
 		{
-			try
-			{
+			//try
+			//{
 				// check if the Model is Valid
 				if (ModelState.IsValid)
 				{
@@ -125,13 +139,14 @@ namespace Core_WebApp.Controllers
 				}
 				// if Model is not valid then Stay on Same page with Error Messages
 				return View(department);
-			}
-			catch (Exception ex)
-			{
-				throw;
-			}
+			//}
+			//catch (Exception ex)
+			//{
+			//	throw;
+			//}
 		}
-
+		//[Authorize(Roles = "Admin")]
+		[Authorize(Policy = "AdminPolicy")]
 		public async Task<IActionResult> Delete(int id)
 		{
 			await  deptServ.DeleteAsync(id);
@@ -156,6 +171,18 @@ namespace Core_WebApp.Controllers
 			var dd = await deptServ.GetAsync(d.DeptNo);
 			ViewBag.DeptName = dd.DeptName;
 			return View("ListDept");
+		}
+
+
+		public IActionResult ShowDetails(int id)
+		{
+
+			HttpContext.Session.SetInt32("DeptNo",id);
+			// Storee the Department object in session
+			var dept = deptServ.GetAsync(id).Result;
+			HttpContext.Session.SetObject<Department>("Dept",dept);
+
+			return RedirectToAction("Index", "Employee");
 		}
 
 	}

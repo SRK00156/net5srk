@@ -147,6 +147,74 @@ EF COre 5.0 Many-to-Many Relationships
 		- If you can change the Model classes, the creat a custom validator class by deriving it from 'ValidationAttribute' class from SYstem.ComponentModel.DataAnnotation 
 - INstead of Modifying the Model class for Validation using Attributes, thor the exception from the action method
 
+# Using Sessions in ASP.NET Core
+	- HttpContext.Session
+		- The ISession is COntract used for Managing the Session STate based on MAthods
+			- Set(byte) and TryGet() for sessitng and getting session data respectively
+				- The default format of maintaining the session state is Binary using Byte Array 
+				- ASP.NET Core uses InMemory Distributed Cache for storing the session state 
+		- SessionExtensions is the extension class provided for maintating values in Session
+			- SetInt32(), GetInt32()
+			- SetString(), GetString()
+		- We can create a custom Session Provider for Storing data in custom format e.g. JSON
+
+# Using Microsoft's Identity Platform
+	- Microsoft.AspNetCore.Identity.UI
+		- Provides STandard Pages for Identity Management
+		- Microsoft.AspNetCore.Identity Namespace
+			- SignInManager<IdentityUser>
+			- UserManager<IdentityUser>
+				- Manages User's Creation, Updation,Deletion, Reading
+			- RoleManager<IdentityRole>
+				- Manages Role Creation, Updation,Deletion, Reading
+		- AddAuthentication()
+			- Enable USer Based Security for the Application
+		- AddAuthorization()
+			- Enable Role Based Security for the Applciation
+			- Enable Policy Based Authentication
+		- REady to use Views aka Razor PAges for Security Management
+			- AddDefaultUI()
+				- Provide an Access of Identity Pages in Application and use them Request Prossing 
+
+	- Microsoft.AspNetCore.Identity.EntityFrameworkCore
+		- IdentityDbContext:IdentityDbContext<IdentityUser,IdentityRole,IdentityClaim>
+			- Connect to Database Engine and CReates Tables for ASP.NET Core Identity 
+	- If the Application Needs the Roles then please follow instructructions provided in following points
+		- CReate a RoleController, Injected with RoleManager<IdentityRole>
+		- To Resolve the RoleManager<IdentityRole>, modify the COnfigureServices() method of the Start Class to use 
+			- services.AddIdentity<IdentityUser,IdentityRole>()
+				- for Role Based Security
+		- CReate a Separate Controller (Recommended) to Assign role for already available USers
+			- In This controller Inject RoleManager<IdentityRole> and UserManager<IdentityUser> as constructor Injection
+	- To eliminate the hard-coding of the role names in Controller in [Authorize] attribute define the AddAuthorizationService() in COnfigfureServices() method of the Startup class by creating Application Policies
+# ASP.NET Core Custom Filters
+	- Uses Cases for Creating Action Filter
+		- Custom Exception Management to Log Exception and Return Error Page
+		- Custom Logger Service to log all incomming requests
+		- Writing Custom Authentication Provider and custom Authorize Filter for databases other than SQLServer
+			 
+	- Various Context Objects used by ASP.NET Core 5 in  Request Processing
+		- HttpRequest --> HttpContext --> ControllerContext --> ActionContext --> ResultContext --> HttpResponse
+			- HttpContext : Loads All Middlewares
+			- ControllerContext : Create an Instance of Controller. Verify the Security
+				- Load Authothzarion inside the FilterContext
+				- Load Any other Action Filters derived from FilterContext e.g. ExceptionFilter
+			- ActionContext : Map the Action to the Request using ResourceFilter
+				- ActionExecutingContext, the action is targetted and start executing
+					- Load Authothzarion inside the FilterContext
+					- Load Any other Action Filters derived from FilterContext e.g. ExceptionFilter
+				- If Exception Occures, then execute the ExceptionFilter and Go to ResultContext and execute the ResultFilter to generate filter
+				- ActionExecutedContext
+					- Generate The Result using ResultContext and ResultFilter
+			- ResultContext
+				- ResultExecutingContext
+					- Decide the Type of Result
+						- ViewResult, FileResult, JsonResult, OkResult, OkObjectResult, NotFoundResult, etc.
+						- Generate Result
+
+				- ResultExecutedContext
+					- Generate R$esponse
+
 
 #  Assignments
 	
@@ -164,3 +232,18 @@ EF COre 5.0 Many-to-Many Relationships
 3. Modify the Department Table by adding a new column as Capacity. When the Department Record is created set the value for the Capacity. Make sure that when the new employee is added in that department if the capacity is excedding, the throw the capacity full exception.
 	e.g. If IT Departments is having Capacity is 20 and if there are already 20 employes for the department, then when new employee is added in IT department, then throw capacity full exception (45 mins)
 4. CReate a View that will show List of Departments in one table and List of EMployees in another table. When a Department is selected from Department Table then Employee table should sho only those employee for thje selected department.    	 (30 mins)
+
+# Daye 3: Date: 18-09-2021
+1. When application is loaded create a default Administrator Role and User for Administrator Role. The RoleController and RoleUserManagerController can  only be accessible to the Administrator Role.  (2 Hours)
+2. Make sure that the policies are dynamically set for the User (4-8 Hours)
+	- Create a COntroller, that will be accessible only to the Administartor Role, this Controller should have an action method called as 'CreatePolicy'. This action method must define a policy for one or more roles at a time. Then all controllers and their action methods will be accessible based on these policies. 
+		- Hints: 
+			- STore Policies for Role in Database
+			- STore then in json file and load it using File MIddleware
+3. Modify the Exception Filter to Log the Requests in the Database in LogTable. This table will have following columns  (Today)
+	- LogId
+	- CurrentLoginName
+	- RequestDateTime
+	- ControllerName
+	- ActioName
+	- ErrorMessage

@@ -1,4 +1,5 @@
 ﻿using Core.DataAccess.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,9 +26,9 @@ namespace Core.DataAccess.Services
 			throw new NotImplementedException();
 		}
 
-		public Task<IEnumerable<Employee>> GetAsync()
+		public async Task<IEnumerable<Employee>> GetAsync()
 		{
-			throw new NotImplementedException();
+			return await ctx.Employees.ToListAsync();
 		}
 
 		public Task<Employee> GetAsync(int id)
