@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Core_DataAccess_KalpeshSoliya.Models.Dept>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <!--ASP.NET Core TagHelpers prefixed with 'asp-'
+        provides a metadta for Executional behavior for HTML Tags
+        sets the execution for the HTML element -->
+    <!--asp-action: Makes request to an action method of the currnt controllor-->
+    <!--asp-controoler: MAkes request to the Controller-->
+    <!--asp-for: Binds the Model class property to the HTML element generatlly used for input element fro Data Read/Write-->
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DeptId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DeptName)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <!--Property of RAzorPage class that represents the model class passed to View-->
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DeptId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DeptName)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new {id=item.DeptId}) |
+                    @Html.ActionLink("Delete", "Delete", new {id=item.DeptId})
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

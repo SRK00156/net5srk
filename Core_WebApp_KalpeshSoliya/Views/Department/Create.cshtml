@@ -1,0 +1,41 @@
+﻿@model Core_DataAccess_KalpeshSoliya.Models.Dept
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Department</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <!--On Submit, the HTTP POST request will be executed for create action method with HTTPPost-->
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="DeptId" class="control-label"></label>
+                <!--asp-for: the tag helper used for Two Way Binding
+                    When a property assigned to asp-for is change the Model bind with view will be updated-->
+                <input asp-for="DeptId" class="form-control" />
+                <span asp-validation-for="DeptId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DeptName" class="control-label"></label>
+                <input asp-for="DeptName" class="form-control" />
+                <span asp-validation-for="DeptName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

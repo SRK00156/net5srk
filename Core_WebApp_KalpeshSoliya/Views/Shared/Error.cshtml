@@ -1,0 +1,15 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<h1 class="text-danger">Error.</h1>
+<h2 class="text-danger">An error occurred while processing your request.</h2>
+
+<h2>The Error Occured in Controller with name as @Model.ControllerName</h2>
+<h2>Actionj Method that throws Exception is @Model.ActionName</h2>
+<h2>The Error Message is  @Model.ErrorMessage</h2>
+
+
+<!--Hyperlink to go back to original Page-->
+<a asp-controller="@Model.ControllerName" asp-action="@Model.ActionName">Go Back</a>-->

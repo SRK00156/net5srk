@@ -1,0 +1,40 @@
+﻿@using Core_DataAccess_KalpeshSoliya.Models
+@model Core_DataAccess_KalpeshSoliya.Models.Dept
+
+@{
+    ViewData["Title"] = "ListDept";
+    //Read department data from View
+    var departments = ViewBag.Dept;
+}
+
+<h1>Showing the DeptName into DropDown List aka HTML select elements</h1>
+<h5>
+    Using asp-items helper, it will iterative over the collection of the type
+    <br />
+    SelectList which accept following parameters
+    SelectList(Collection, "datavaluefiled","datatextfield")
+    <br />
+    datavaluefield: the value that is selected from select element
+    datatextfield: the value that is displayed in UI for options in select element
+</h5>
+
+<div class="container">
+    <strong>List of Department Names</strong>
+    <select asp-for=" DeptId" asp-items='@new SelectList((IEnumerable<Dept>)departments, "DeptId","DeptName")'></select>
+</div>
+<hr />
+
+<form asp-action="ListDept">
+    <strong>List of Department Name</strong>
+    <select asp-for="DeptId" asp-items='@new SelectList((IEnumerable<Dept>)departments,"DeptId","DeptName")'></select>
+    <input type="submit" value="Show DeptNo"/>
+</form>
+<hr/>
+<div class="container">
+    <strong>
+        Selected DeptId is = @ViewBag.DeptId
+    </strong>
+    <strong>
+        Selected DeptName is = @ViewBag.DeptName
+    </strong>
+</div>
