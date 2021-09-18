@@ -43,10 +43,11 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Location)
             </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new {id=item.DeptNo  }) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.DeptNo })
-            </td>
+			<td>
+				@Html.ActionLink("Edit", "Edit", new { id = item.DeptNo }) |
+				@Html.ActionLink("Delete", "Delete", new { id = item.DeptNo })|
+				@Html.ActionLink("ShowDetails", "ShowDetails", new { id = item.DeptNo })
+			</td>
         </tr>
 }
     </tbody>

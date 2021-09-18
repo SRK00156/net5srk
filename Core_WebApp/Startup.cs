@@ -14,6 +14,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Core.DataAccess.Models;
 using Core.DataAccess.Services;
+using Core_WebApp.CustomFilters;
 
 namespace Core_WebApp
 {
@@ -54,8 +55,28 @@ namespace Core_WebApp
 			// if the Database connectivity is failed because oif any reason
 			services.AddDatabaseDeveloperPageExceptionFilter();
 			// USed to Connect to the Database that contains ASP.NET Users and Roles Informations
-			services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-				.AddEntityFrameworkStores<ApplicationDbContext>();
+			//services.AddDefaultIdentity<IdentityUser>(
+			//	//options => options.SignIn.RequireConfirmedAccount = true
+			//)
+			//	.AddEntityFrameworkStores<ApplicationDbContext>();
+
+			// for USer and Role Based Security (and also for Policiies)
+			services.AddIdentity<IdentityUser,IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>()
+				.AddDefaultUI(); // Instruct the ASP.NET COre that to Use the Identity UI Library for Providing Access for Identity Pages and navigate across them  
+
+
+			// defining the Authorize service witn policies
+			services.AddAuthorization(options=> {
+				options.AddPolicy("AllRolePolicy", policy=> {
+					policy.RequireRole("Admin", "Manager", "Clerk");
+				});
+				options.AddPolicy("AdminManagerPolicy", policy => {
+					policy.RequireRole("Admin", "Manager");
+				});
+				options.AddPolicy("AdminPolicy", policy => {
+					policy.RequireRole("Admin");
+				});
+			});
 
 			// Register the CUstom Objects aka Services in Dependency Injection COntainer
 			// 1. Register the DbCOntext 
@@ -66,10 +87,26 @@ namespace Core_WebApp
 			// 2. Register all services as Scopped
 			services.AddScoped<IService<Department,int>,DepartmentService>();
 			services.AddScoped<IService<Employee,int>,EmployeeService>();
+
+
+			// Endble Distrubuted Cache for Maintaining the session in the HOst Memory
+			services.AddDistributedMemoryCache();
+
+			// Configure the session State
+			services.AddSession(options=> {
+				options.IdleTimeout = TimeSpan.FromMinutes(20); // 20 minuts for Session Timeout
+			});
 			
 			
 			// Request Processing for ASP.NET Core 5 MVC Controllers with Views and API Controllers
-			services.AddControllersWithViews();
+			services.AddControllersWithViews(options=> {
+				// Register the filter Globally
+				// Resolve all dependencies used by CustomExceptionFilterAttribute
+				options.Filters.Add(typeof(CustomExceptionFilterAttribute));
+			});
+			// Mandatory in ASP.NET Core 5 when thge AddIndeity<IdentityUser,IdnetityRole>()
+			// service is added in the application
+			services.AddRazorPages();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -103,10 +140,14 @@ namespace Core_WebApp
 			// by defaultm, the contents of wwwroot folder will read and with its references
 			// files from wwwroot folder will be added in HTTP Response
 			app.UseStaticFiles();
-
+			
 			app.UseRouting();
-
+			app.UseSession(); // Ask the Server to use Session Objects in HTTPContext aka HTTP Channel
+			// Middlewares to make sure that the HttpContext
+			// Must carry Credentials to Authenticate and Authorize Users
 			app.UseAuthentication();
+			// The Authorization Middleware is linked with Authorization Service to load Authorization Rules based on Roles and Policies and based upon it
+			// the [Authorize] Attribute will provide the application acceess
 			app.UseAuthorization();
 
 			// Map the CUrrent Route Request for MVC to Home COntroller and Its Index Method
