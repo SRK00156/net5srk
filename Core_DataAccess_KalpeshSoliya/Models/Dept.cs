@@ -14,6 +14,7 @@ namespace Core_DataAccess_KalpeshSoliya.Models
 
         public int DeptId { get; set; }
         public string DeptName { get; set; }
+        public int Capacity { get; set; }
 
         public virtual ICollection<Emp> Emps { get; set; }
     }

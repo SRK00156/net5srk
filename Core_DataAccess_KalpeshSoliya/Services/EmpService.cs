@@ -8,16 +8,27 @@ using System.Threading.Tasks;
 
 namespace Core_DataAccess_KalpeshSoliya.Services
 {
-	public class EmpService : IService<Emp, int>
+	public class EmpService : IService<Emp, int>, IServiceEmpDept
 	{
-
 		private readonly SRKCompContext ctx;
 		public EmpService(SRKCompContext ctx)
 		{
 			this.ctx = ctx;
 		}
-		public async Task<Emp> CreateAsync(Emp entity)
+
+        public async Task<bool> IsDepartmentCapable(int _deptId)
+        {
+			var dept = await ctx.Depts.FindAsync(_deptId);
+			int total_emp = await ctx.Emps.CountAsync(i => i.DeptId == _deptId);
+			if (total_emp + 1 > dept.Capacity)
+				return false;
+			else
+				return true;
+        }
+
+        public async Task<Emp> CreateAsync(Emp entity)
 		{
+			DeptService deptSrv = new(ctx);
 			var res = await ctx.Emps.AddAsync(entity);
 			await ctx.SaveChangesAsync();
 			return res.Entity;
@@ -33,12 +44,12 @@ namespace Core_DataAccess_KalpeshSoliya.Services
 
 		public async Task<IEnumerable<Emp>> GetAsync()
 		{
-			return await ctx.Emps.ToListAsync();
+			return await ctx.Emps.Include(a => a.Dept).ToListAsync();
 		}
 
 		public async Task<Emp> GetAsync(int id)
 		{
-			return await ctx.Emps.FindAsync(id);
+			return await ctx.Emps.Include(a=>a.Dept).FirstOrDefaultAsync(i => i.EmpId == id);
 		}
 
 		public async Task<Emp> UpdateAsync(int id, Emp entity)
@@ -54,5 +65,6 @@ namespace Core_DataAccess_KalpeshSoliya.Services
 			await ctx.SaveChangesAsync();
 			return emp;
 		}
-	}
+
+    }
 }

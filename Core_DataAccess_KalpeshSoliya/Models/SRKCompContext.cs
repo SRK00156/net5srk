@@ -19,13 +19,14 @@ namespace Core_DataAccess_KalpeshSoliya.Models
 
         public virtual DbSet<Dept> Depts { get; set; }
         public virtual DbSet<Emp> Emps { get; set; }
+        public virtual DbSet<LogTable> LogTables { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Data Source=SRKSUR5210LT;Initial Catalog=SRKComp;User Id = sa; Password = Kds@12345;");
+                optionsBuilder.UseSqlServer("Data Source=SRKSUR5210LT;Initial Catalog=SRKComp;User Id=sa; Password=Kds@12345");
             }
         }
 
@@ -72,6 +73,25 @@ namespace Core_DataAccess_KalpeshSoliya.Models
                     .WithMany(p => p.Emps)
                     .HasForeignKey(d => d.DeptId)
                     .HasConstraintName("FK_Emp_Dept");
+            });
+
+            modelBuilder.Entity<LogTable>(entity =>
+            {
+                entity.HasKey(e => e.LogId);
+
+                entity.ToTable("LogTable");
+
+                entity.Property(e => e.LogId).ValueGeneratedNever();
+
+                entity.Property(e => e.ActioName).HasMaxLength(100);
+
+                entity.Property(e => e.ControllerName).HasMaxLength(100);
+
+                entity.Property(e => e.CurrentLoginName).HasMaxLength(100);
+
+                entity.Property(e => e.ErrorMessage).HasMaxLength(100);
+
+                entity.Property(e => e.RequestDateTime).HasColumnType("datetime");
             });
 
             OnModelCreatingPartial(modelBuilder);

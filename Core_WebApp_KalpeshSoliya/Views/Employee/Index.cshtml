@@ -1,0 +1,57 @@
+﻿@model IEnumerable<Core_DataAccess_KalpeshSoliya.Models.Emp>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Employee</h1>
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.EmpId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EmpName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EmpDesignation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EmpSalary)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Dept.DeptName)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var item in Model)
+            {
+        <tr>
+            <td>
+                @Html.DisplayFor(ModelItem => item.EmpId)
+            </td>
+            <td>
+                @Html.DisplayFor(ModelItem => item.EmpName)
+            </td>
+            <td>
+                @Html.DisplayFor(ModelItem => item.EmpDesignation)
+            </td>
+            <td>
+                @Html.DisplayFor(ModelItem => item.EmpSalary)
+            </td>
+            <td>
+                @Html.DisplayFor(ModelItem => item.Dept.DeptName)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.EmpId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.EmpId })
+            </td>
+        </tr>
+            }
+    </tbody>
+</table>
+

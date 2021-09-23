@@ -33,12 +33,12 @@ namespace Core_DataAccess_KalpeshSoliya.Services
 
 		public async Task<IEnumerable<Dept>> GetAsync()
 		{
-			return await ctx.Depts.ToListAsync();
+			return await ctx.Depts.Include(a => a.Emps).ToListAsync();
 		}
 
 		public async Task<Dept> GetAsync(int id)
 		{
-			return await ctx.Depts.FindAsync(id);
+			return await ctx.Depts.Include(a => a.Emps).FirstOrDefaultAsync(i => i.DeptId == id); ;
 		}
 
 		public async Task<Dept> UpdateAsync(int id, Dept entity)
@@ -48,6 +48,7 @@ namespace Core_DataAccess_KalpeshSoliya.Services
 			// Pass the P.K> SO that Record will be Search
 			dept.DeptId = entity.DeptId;
 			dept.DeptName = entity.DeptName;
+			dept.Capacity = entity.Capacity;
 			await ctx.SaveChangesAsync();
 			return dept;
 		}

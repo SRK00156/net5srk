@@ -19,4 +19,9 @@ namespace Core_DataAccess_KalpeshSoliya.Services
 		Task<TEntity> UpdateAsync(TPk id, TEntity entity);
 		Task DeleteAsync(TPk id);
 	}
+
+	public interface IServiceEmpDept
+	{
+		Task<bool> IsDepartmentCapable(int _deptId);
+	}
 }

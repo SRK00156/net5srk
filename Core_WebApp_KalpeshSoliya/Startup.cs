@@ -71,6 +71,7 @@ namespace Core_WebApp_KalpeshSoliya
             // 2. Register all services as Scopped
             services.AddScoped<IService<Dept, int>, DeptService>();
             services.AddScoped<IService<Emp, int>, EmpService>();
+            services.AddScoped<IServiceEmpDept, EmpService>();
 
 
             // Request Processing for ASP.NET Core 5 MVC Controllers with Views and API Controllers

@@ -25,6 +25,8 @@ namespace Core_WebApp_KalpeshSoliya.Controllers
     /// </summary>
     public class DepartmentController: Controller
     {
+        CustomValidator valid = new CustomValidator();
+
         // Dependency Injection of Department Service
         // that is registered in ConfigureServices() method of Startup class   
         private readonly IService<Dept, int> DeptServ;
@@ -70,6 +72,7 @@ namespace Core_WebApp_KalpeshSoliya.Controllers
                 if(ModelState.IsValid)
                 {
                     if (_department.DeptId < 0) throw new Exception("DeptId cannot be -ve");
+                    if (!valid.IsValid(_department.Capacity)) throw new Exception("Capacity cannot be -ve");
                     var res = await DeptServ.CreateAsync(_department);
                     //Redirect to the Action
                     return RedirectToAction("Index");
@@ -117,6 +120,7 @@ namespace Core_WebApp_KalpeshSoliya.Controllers
                 //check if the model is vaild
                 if(ModelState.IsValid)
                 {
+                    if (!valid.IsValid(dept.Capacity)) throw new Exception("Capacity cannot be -ve");
                     var res = await DeptServ.UpdateAsync(id, dept);
                     return RedirectToAction("Index");
                 }
@@ -149,8 +153,25 @@ namespace Core_WebApp_KalpeshSoliya.Controllers
             ViewBag.DeptId = d.DeptId;
             var dd = await DeptServ.GetAsync(d.DeptId);
             ViewBag.DeptName = dd.DeptName;
+            ViewBag.Capacity = dd.Capacity;
             return View("ListDept");
         }
 
+        public async Task<IActionResult> ListEmp()
+        {
+            var _dept = await DeptServ.GetAsync();
+            ViewBag.Employee = _dept.SelectMany(d => d.Emps).ToList();
+            ViewBag.DeptId = 0;
+            return View(_dept);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ListEmp(int DeptId)
+        {
+            var _dept = await DeptServ.GetAsync();
+            ViewBag.Employee= _dept.Where(d => d.DeptId == DeptId).SelectMany(d => d.Emps).ToList();
+            ViewBag.DeptId = DeptId;
+            return View(_dept);
+        }
     }
 }

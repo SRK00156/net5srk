@@ -1,0 +1,109 @@
+﻿@model IEnumerable<Core_DataAccess_KalpeshSoliya.Models.Dept>
+
+@{
+    ViewData["Title"] = "ListEmp";
+    var EmployeeList = ViewBag.Employee;
+}
+
+<h1>Department</h1>
+
+<form asp-action="ListEmp">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Select
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DeptId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DeptName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Capacity)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model)    
+            {
+                <tr>
+                    <td>
+
+                        @if (item.DeptId == @ViewBag.DeptId)
+                        {
+                            <input name="DeptId" type="radio"  value=@item.DeptId checked="checked" onclick="this.form.submit()" />
+                            //@Html.RadioButton("DeptId", item.DeptId, true, new { onchange = "this.form.submit();" })
+                        }
+                        else
+                        {
+                            <input name="DeptId" type="radio" value=@item.DeptId  onclick="this.form.submit()"  />
+                            //@Html.RadioButton("DeptId",item.DeptId, false, new { onchange = "this.form.submit();" })
+                        }
+
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DeptId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DeptName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Capacity)
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</form>
+
+<h1>Employee</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Id
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                Designation
+            </th>
+            <th>
+                Salary
+            </th>
+            <th>
+                Department
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var eitem in EmployeeList)
+        {
+            <tr>
+                <td>
+                    @eitem.EmpId
+                </td>
+                <td>
+                    @eitem.EmpName
+                </td>
+                <td>
+                    @eitem.EmpDesignation
+                </td>
+                <td>
+                    @eitem.EmpSalary
+                </td>
+                <td>
+                    @eitem.Dept.DeptName
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
