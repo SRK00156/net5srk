@@ -216,6 +216,46 @@ EF COre 5.0 Many-to-Many Relationships
 					- Generate R$esponse
 
 
+# Using ASP.NET Core 5 APIs
+- Each Action Method in API Controller is By Default HttpGet. SO if there are multiple Actione methods then the Method Binding is Mandatory
+	- Method Binding is a Process of Mapping the Http Request to action methods explicitely based on Http Request Method Type
+		- HttpGet() | HttpGet(string template) 
+		- HttpPost() | HttpPost(string template)
+		- HttpPut() | HttpPut(string template)
+		- HttpDelete() | HttpDelete(string template)	
+	- The template represents the Parameter Binding for a method
+		- FromBody
+			- Read data from Http Body for Post and Put request and map with CLR object
+			- USe this is [ApiController] attribute is not applied on controller class (NOT-RECOMMENDED). Make sure taht5 ApiController is used.
+		- FromRoute
+			- Map the data received from Route Expression to CLR Object
+		- FromQuery
+			- Map the data received from QueryString to CLR Object
+		- FromForm
+			- Map the Html Form Post (Name/Value pair) to CLR Object
+	- template also defines the parameters those are passed to action method as the URL Parameter (Default)
+		- http://server/api/myapicontroller/[Paramneter]
+- ApiControllerAttribute
+	- The Attribute [ApiController] applied on Controller class to make sure that for HttpPost and HttpPut request, the data is read from Body and map with the CLR Object to process it
+
+- API Designing With respect to the Action Methods
+	- Check for all Error for Posted Data or data received from URL
+	- If the URL Parameter is Nullable then also chreck for the NULL
+	- Before performing Edit/Delete operations based on 'id' parameter, make sure that the record existance if checked
+		- Either do this in Data Access Layer (Recommended)
+		- Do it in Action Method
+			- Hit the database and may incur additional charges for database call in case of Cloud databases
+	- Validate the model before processing it
+		- MUST be implmented in Action Method aka SERVR-SIDE Validation
+	-  Always handle Exception
+		- MUST be in Action Method
+		- If Action Method calls Busine Logic and it call Data Access, then throw exception from each method and finally handle it in Action Method
+	- COnfigure CORS Services and define Policy and also configure the CORS Middleware so that the API can understand requests and generate responses
+
+- Open API Definitions in ASP.NT Core 5 API
+	- OpenAPI 3.0
+
+- Using API for File Operations
 #  Assignments
 	
 # Day 1: Date: 04-09-2021
@@ -247,3 +287,10 @@ EF COre 5.0 Many-to-Many Relationships
 	- ControllerName
 	- ActioName
 	- ErrorMessage
+
+
+# Date: 25-09-2021
+1. Create an API that will Download the File From the Server 
+2. Create an API that will provide Server-Side Search of Employees based on DeptName (Now)
+3. Create an API that will accept One-to-many related data for Departments and EMployees in a single POST Request and Save it in Database.  (Now)
+	- Note: MAke sure that, if the Department is inserted and employee recors is failed to store in Employee Table then the Department Record MUST be RolledBack 

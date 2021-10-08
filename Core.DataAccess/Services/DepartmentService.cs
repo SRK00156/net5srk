@@ -18,9 +18,16 @@ namespace Core.DataAccess.Services
 
 		public async Task<Department> CreateAsync(Department entity)
 		{
-			var res = await ctx.Departments.AddAsync(entity);
-			await ctx.SaveChangesAsync();
-			return res.Entity;
+			try
+			{
+				var res = await ctx.Departments.AddAsync(entity);
+				await ctx.SaveChangesAsync();
+				return res.Entity;
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
 		}
 
 		public async Task DeleteAsync(int id)
