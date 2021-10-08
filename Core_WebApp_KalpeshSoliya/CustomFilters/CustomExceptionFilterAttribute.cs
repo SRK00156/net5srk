@@ -2,10 +2,9 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Core_DataAccess_KalpeshSoliya.Models;
+using Core_DataAccess_KalpeshSoliya.Services;
+using System.Security.Claims;
 
 namespace Core_WebApp.CustomFilters
 {
@@ -15,6 +14,7 @@ namespace Core_WebApp.CustomFilters
 	public class CustomExceptionFilterAttribute : ExceptionFilterAttribute
 	{
 		private readonly IModelMetadataProvider modelMetadataProvider;
+		private readonly IServiceLogTable<LogTable> LogServ;
 
 		/// <summary>
 		/// Let the constructor injected with IModelMetadtaProvider
@@ -23,9 +23,10 @@ namespace Core_WebApp.CustomFilters
 		/// THis will be resolved in AddContrtollerWithViews() method of the
 		/// ConfigureServices() method of STartup class
 		/// </summary>
-		public CustomExceptionFilterAttribute(IModelMetadataProvider modelMetadataProvider)
+		public CustomExceptionFilterAttribute(IModelMetadataProvider modelMetadataProvider, IServiceLogTable<LogTable> _LogServ)
 		{
 			this.modelMetadataProvider = modelMetadataProvider;
+			this.LogServ = _LogServ;
 		}
 
 
@@ -50,6 +51,19 @@ namespace Core_WebApp.CustomFilters
 			dictionary["ControllerName"] = context.RouteData.Values["controller"].ToString();
 			dictionary["ActionName"] = context.RouteData.Values["action"].ToString();
 			dictionary["ErrorMessage"] = message;
+
+
+			LogTable Log = new LogTable()
+			{
+				ActioName= context.RouteData.Values["action"].ToString(),
+				ControllerName= context.RouteData.Values["controller"].ToString(),
+				ErrorMessage= message,
+				RequestDateTime=System.DateTime.Now,
+				CurrentLoginName=context.HttpContext.User.FindFirstValue(ClaimTypes.Email)
+
+		};
+			LogServ.InsertLogAsync(Log);
+
 
 			viewResult.ViewData = dictionary;
 

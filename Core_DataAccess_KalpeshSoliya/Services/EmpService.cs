@@ -28,7 +28,6 @@ namespace Core_DataAccess_KalpeshSoliya.Services
 
         public async Task<Emp> CreateAsync(Emp entity)
 		{
-			DeptService deptSrv = new(ctx);
 			var res = await ctx.Emps.AddAsync(entity);
 			await ctx.SaveChangesAsync();
 			return res.Entity;
@@ -50,6 +49,16 @@ namespace Core_DataAccess_KalpeshSoliya.Services
 		public async Task<Emp> GetAsync(int id)
 		{
 			return await ctx.Emps.Include(a=>a.Dept).FirstOrDefaultAsync(i => i.EmpId == id);
+		}
+
+		public async Task<IEnumerable<Emp>> GetWithoutChildAsync()
+		{
+			return await ctx.Emps.ToListAsync();
+		}
+
+		public async Task<Emp> GetWithoutChildAsync(int id)
+		{
+			return await ctx.Emps.FirstOrDefaultAsync(i => i.EmpId == id);
 		}
 
 		public async Task<Emp> UpdateAsync(int id, Emp entity)

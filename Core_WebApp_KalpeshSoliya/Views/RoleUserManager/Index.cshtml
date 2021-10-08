@@ -1,0 +1,35 @@
+﻿@model Core_WebApp_KalpeshSoliya.Controllers.UserInRole
+@using Microsoft.AspNetCore.Identity
+
+@{
+    ViewData["Title"] = "Index";
+    var Users = ViewBag.Users;
+    var Roles = ViewBag.Roles;
+}
+
+<h1>List of Users and Role</h1>
+<h4>Select User Name and Role Name from Select and Click on 'Assign Role to User' button</h4>
+
+<form asp-action="Create">
+    <div class="form-group">
+        <label>Select User Name</label>
+        <select class="form-control"
+                asp-for="UserName"
+                asp-items='@new SelectList((IEnumerable<IdentityUser>)Users,"Id","UserName")'></select>
+    </div>
+    <br />
+    <div class="form-group">
+        <label>Select Role Name</label>
+        <select class="form-control"
+                asp-for="Name"
+                asp-items='@new SelectList((IEnumerable<IdentityRole>)Roles,"Id","Name")'></select>
+    </div>
+    <hr />
+    <input type="submit" value="Assign Role To User" />
+</form>
+<br />
+<div class="container">
+    <strong>
+        @ViewBag.Message
+    </strong>
+</div>

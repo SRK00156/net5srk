@@ -39,4 +39,17 @@ namespace Core_DataAccess_KalpeshSoliya.Models
         public int? DeptId { get; set; }
 
     }
+
+    public class PolicyRoleMappingMetadata
+    {
+        [Display(Name = "ID")]
+        [Required(ErrorMessage = "Policy Id Must...")]
+        public int PolicyId { get; set; }
+        [Display(Name = "Policy")]
+        [Required(ErrorMessage = "Policy Name Must...")]
+        public string PolicyName { get; set; }
+        [Display(Name = "RoleId")]
+        public string RoleId { get; set; }
+
+    }
 }

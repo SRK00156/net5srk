@@ -14,6 +14,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Core_DataAccess_KalpeshSoliya.Models;
 using Core_DataAccess_KalpeshSoliya.Services;
+using Newtonsoft.Json;
+using Core_WebApp.CustomFilters;
 
 namespace Core_WebApp_KalpeshSoliya
 {
@@ -47,20 +49,11 @@ namespace Core_WebApp_KalpeshSoliya
         /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
-            // Register the ApplicationDbContext class in DI COntainer to CRUD 
-            // for ASP.NET USers, Roles, etc.
-            // Scopped Instntiation 
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+            
 
             // ASP.NET Core 5 , The Action Filter for rendering Database Error Page
-            // if the Database connectivity is failed because oif any reason
+            // if the Database connectivity is failed because of any reason
             services.AddDatabaseDeveloperPageExceptionFilter();
-
-            // USed to Connect to the Database that contains ASP.NET Users and Roles Informations
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
 
             // Register the CUstom Objects aka Services in Dependency Injection COntainer
             // 1. Register the DbCOntext 
@@ -72,10 +65,54 @@ namespace Core_WebApp_KalpeshSoliya
             services.AddScoped<IService<Dept, int>, DeptService>();
             services.AddScoped<IService<Emp, int>, EmpService>();
             services.AddScoped<IServiceEmpDept, EmpService>();
+            services.AddScoped<IServiceLogTable<LogTable>, LogTableService>();
+
+
+            // Endble Distrubuted Cache for Maintaining the session in the HOst Memory
+            services.AddDistributedMemoryCache();
+            //Configure the Sesiion State
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(20); // 20 minutes for Session Timeout
+            });
 
 
             // Request Processing for ASP.NET Core 5 MVC Controllers with Views and API Controllers
-            services.AddControllersWithViews();
+            services.AddControllersWithViews(options => {
+                // Register the filter Globally
+                // Resolve all dependencies used by CustomExceptionFilterAttribute
+                options.Filters.Add(typeof(CustomExceptionFilterAttribute));
+            });
+
+
+            // Register the ApplicationDbContext class in DI COntainer to CRUD 
+            // for ASP.NET USers, Roles, etc.
+            // Scopped Instntiation 
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("DefaultConnection")));
+            // USed to Connect to the Database that contains ASP.NET Users and Roles Informations
+            //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            //    .AddEntityFrameworkStores<ApplicationDbContext>();
+            // for USer and Role Based Security (and also for Policiies)
+            services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultUI(); // Instruct the ASP.NET COre that to Use the Identity UI Library for Providing Access for Identity Pages and navigate across them  
+
+            // defining the Authorize service witn policies
+            services.AddAuthorization(options => {
+                options.AddPolicy("AllRolePolicy", policy => {
+                    policy.RequireRole("Admin", "Manager", "Lead");
+                });
+                options.AddPolicy("AdminLeadPolicy", policy => {
+                    policy.RequireRole("Admin", "Lead");
+                });
+                options.AddPolicy("AdminPolicy", policy => {
+                    policy.RequireRole("Admin");
+                });
+            });
+            // Mandatory in ASP.NET Core 5 when thge AddIndeity<IdentityUser,IdnetityRole>()
+            // service is added in the application
+            services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -87,7 +124,7 @@ namespace Core_WebApp_KalpeshSoliya
 		/// </summary>
 		/// <param name="app"></param>
 		/// <param name="env"></param>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             if (env.IsDevelopment())
             {
@@ -111,8 +148,13 @@ namespace Core_WebApp_KalpeshSoliya
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            //Ask the Server to use Session Object in HTTPContext aka HTTP Channel
+            app.UseSession();
+            //Middlewares to make sure that the HttpContext aka HTTP channel
+            //Must Carry Credentials to Authentication and Aurthorize User
             app.UseAuthentication();
+            // The Authorization Middleware is linked with Authorization service to load Authorization Rules base on roles and policies and based upon it
+            // the [Authorize] Attribute will provide the application acceess
             app.UseAuthorization();
 
             // Map the CUrrent Route Request for MVC to Home COntroller and Its Index Method
@@ -129,6 +171,11 @@ namespace Core_WebApp_KalpeshSoliya
                 // e.g. All Identioty Views like Register, Login , etc.
                 endpoints.MapRazorPages();
             });
+
+            SeedingData.SeedRoles(roleManager, Configuration.GetValue("Role", ""));
+            SeedingData.SeedUsers(userManager, Configuration.GetValue("EMail",""), Configuration.GetValue("Pass",""),Configuration.GetValue("Role",""), Configuration.GetValue("UserName", ""));
         }
+
+
     }
 }

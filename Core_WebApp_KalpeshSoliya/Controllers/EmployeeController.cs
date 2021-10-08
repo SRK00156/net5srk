@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using Core_DataAccess_KalpeshSoliya.Models;
 using Core_DataAccess_KalpeshSoliya.Services;
 using Core_WebApp_KalpeshSoliya.Models;
+using Microsoft.AspNetCore.Http;
+using Core_WebApp_KalpeshSoliya.CustomSession;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Core_WebApp_KalpeshSoliya.Controllers
 {
@@ -16,19 +19,28 @@ namespace Core_WebApp_KalpeshSoliya.Controllers
         private readonly IService<Emp, int> empServ;
         private readonly IService<Dept, int> deptServ;
         private readonly IServiceEmpDept empdeptServ;
-        public EmployeeController(IService<Emp,int> _emp_serv, IService<Dept, int> _dept_serv, IServiceEmpDept _empdept_serv)
+        public EmployeeController(IService<Emp, int> _emp_serv, IService<Dept, int> _dept_serv, IServiceEmpDept _empdept_serv)
         {
             empServ = _emp_serv;
             deptServ = _dept_serv;
             empdeptServ = _empdept_serv;
         }
-
+        [Authorize(Roles = "Admin,Lead,Manager")]
         public async Task<IActionResult> Index()
         {
-            var emps = await empServ.GetAsync();
-            return View(emps);
+            var dept = HttpContext.Session.GetObject<Dept>("Dept");
+            var deptNo = HttpContext.Session.GetInt32("DepartmentNo");
+            if (deptNo == null || deptNo == 0 )
+            {
+                var emps = await empServ.GetAsync();
+                return View(emps);
+            }
+
+            var data = empServ.GetAsync().Result.Where(e => e.DeptId == deptNo);
+            return View(data);
         }
 
+        [Authorize(Roles = "Admin,Lead")]
         public async Task<IActionResult> Create()
         {
             var dept = await deptServ.GetAsync();
@@ -40,8 +52,8 @@ namespace Core_WebApp_KalpeshSoliya.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Emp _emp)
         {
-            try
-            {
+            //try
+            //{
                 if(ModelState.IsValid)
                 {
                     if (!valid.IsValid(_emp.EmpId)) throw new Exception("EmpId cannot be -ve");
@@ -52,19 +64,19 @@ namespace Core_WebApp_KalpeshSoliya.Controllers
                     return RedirectToAction("Index");
                 }
                 return View(_emp);
-            }
-            catch(Exception ex)
-            {
-                return View("Error", new ErrorViewModel()
-                {
-                    ControllerName = RouteData.Values["controller"].ToString(),
-                    ActionName = RouteData.Values["action"].ToString(),
-                    ErrorMessage = ex.Message
-                }
-                );
-            }
+            //}
+            //catch(Exception ex)
+            //{
+            //    return View("Error", new ErrorViewModel()
+            //    {
+            //        ControllerName = RouteData.Values["controller"].ToString(),
+            //        ActionName = RouteData.Values["action"].ToString(),
+            //        ErrorMessage = ex.Message
+            //    }
+            //    );
+            //}
         }
-
+        [Authorize(Roles = "Admin,Lead")]
         public async Task<IActionResult> Edit(int id)
         {
             var dept = await deptServ.GetAsync();
@@ -76,8 +88,8 @@ namespace Core_WebApp_KalpeshSoliya.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(int id, Emp _emp)
         {
-            try
-            {
+            //try
+            //{
                 if(ModelState.IsValid)
                 {
                     if (!valid.IsValid(_emp.EmpId)) throw new Exception("EmpId cannot be -ve");
@@ -88,18 +100,18 @@ namespace Core_WebApp_KalpeshSoliya.Controllers
                     return RedirectToAction("Index");
                 }
                 return View(_emp);
-            }
-            catch(Exception ex)
-            {
-                return View("Error", new ErrorViewModel()
-                {
-                    ControllerName = RouteData.Values["controller"].ToString(),
-                    ActionName = RouteData.Values["action"].ToString(),
-                    ErrorMessage = ex.Message
-                });
-            }
+            //}
+            //catch(Exception ex)
+            //{
+            //    return View("Error", new ErrorViewModel()
+            //    {
+            //        ControllerName = RouteData.Values["controller"].ToString(),
+            //        ActionName = RouteData.Values["action"].ToString(),
+            //        ErrorMessage = ex.Message
+            //    });
+            //}
         }
-
+        [Authorize(Roles = "Admin,Lead")]
         public async Task<IActionResult> Delete (int id)
         {
             await empServ.DeleteAsync(id);

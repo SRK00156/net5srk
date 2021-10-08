@@ -6,4 +6,6 @@ namespace Core_DataAccess_KalpeshSoliya.Models
     public partial class Dept { }
     [ModelMetadataType(typeof(EmpMetadata))]
     public partial class Emp { }
+    [ModelMetadataType(typeof(PolicyRoleMapping))]
+    public partial class PolicyRoleMapping { }
 }

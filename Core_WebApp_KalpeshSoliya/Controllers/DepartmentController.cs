@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
 using System.Linq;
 using System.Threading.Tasks;
 using Core_DataAccess_KalpeshSoliya.Models;
 using Core_DataAccess_KalpeshSoliya.Services;
 using Core_WebApp_KalpeshSoliya.Models;
+using Core_WebApp_KalpeshSoliya.CustomSession;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Core_WebApp_KalpeshSoliya.Controllers
 {
@@ -42,6 +45,8 @@ namespace Core_WebApp_KalpeshSoliya.Controllers
 		/// and select Add View
 		/// </summary>
 		/// <returns></returns>
+        //[Authorize(Roles ="Admin,Lead,Manager")]
+        [Authorize(Policy = "AllRolePolicy")]
         public async Task<IActionResult> Index()
         {
             var depts = await DeptServ.GetAsync();
@@ -52,6 +57,7 @@ namespace Core_WebApp_KalpeshSoliya.Controllers
         /// Action Method  that will respons a view with Empty Department Object
         /// </summary>
         /// <returns></returns>
+        [Authorize(Policy = "AdminLeadPolicy")]
         public IActionResult Create()
         {
             var dept = new Dept();
@@ -66,8 +72,8 @@ namespace Core_WebApp_KalpeshSoliya.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Dept _department)
         {
-            try
-            {
+            //try
+            //{
                 //check if model is valid
                 if(ModelState.IsValid)
                 {
@@ -79,19 +85,19 @@ namespace Core_WebApp_KalpeshSoliya.Controllers
                 }
                 //if Model is not valid then stay on same page with error message
                 return View(_department);
-            }
-            catch(Exception ex)
-            {
-                //Catch the Exception and redirect to the Error Page for View/Share folder
-                return View("Error", new ErrorViewModel()
-                {
-                    //Read route expression to extract current execution controller and its Action method
-                    //The 'controller' expresion is read from Route Expression of Startup Class
-                    ControllerName = RouteData.Values["controller"].ToString(),
-                    ActionName = RouteData.Values["action"].ToString(),
-                    ErrorMessage = ex.Message
-                });
-            }
+            //}
+            //catch(Exception ex)
+            //{
+            //    //Catch the Exception and redirect to the Error Page for View/Share folder
+            //    return View("Error", new ErrorViewModel()
+            //    {
+            //        //Read route expression to extract current execution controller and its Action method
+            //        //The 'controller' expresion is read from Route Expression of Startup Class
+            //        ControllerName = RouteData.Values["controller"].ToString(),
+            //        ActionName = RouteData.Values["action"].ToString(),
+            //        ErrorMessage = ex.Message
+            //    });
+            //}
         }
 
         ///<summary>
@@ -101,6 +107,7 @@ namespace Core_WebApp_KalpeshSoliya.Controllers
         ///</summary>
         ///<param name="id"></param>
         ///<return></return>
+        [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> Edit(int id)
         {
             var dept = await DeptServ.GetAsync(id);
@@ -115,8 +122,8 @@ namespace Core_WebApp_KalpeshSoliya.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(int id, Dept dept)
         {
-            try
-            {
+            //try
+            //{
                 //check if the model is vaild
                 if(ModelState.IsValid)
                 {
@@ -125,19 +132,19 @@ namespace Core_WebApp_KalpeshSoliya.Controllers
                     return RedirectToAction("Index");
                 }
                 return View(dept);
-            }
-            catch(Exception ex)
-            {
-                throw;
-            }
+            //}
+            //catch(Exception ex)
+            //{
+            //    throw;
+            //}
         }
-
+        [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> Delete(int id)
         {
             await DeptServ.DeleteAsync(id);
             return RedirectToAction("Index");
         }
-
+        [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> ListDept()
         {
             var depts = await DeptServ.GetAsync();
@@ -156,7 +163,7 @@ namespace Core_WebApp_KalpeshSoliya.Controllers
             ViewBag.Capacity = dd.Capacity;
             return View("ListDept");
         }
-
+        [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> ListEmp()
         {
             var _dept = await DeptServ.GetAsync();
@@ -172,6 +179,17 @@ namespace Core_WebApp_KalpeshSoliya.Controllers
             ViewBag.Employee= _dept.Where(d => d.DeptId == DeptId).SelectMany(d => d.Emps).ToList();
             ViewBag.DeptId = DeptId;
             return View(_dept);
+        }
+        [Authorize(Roles = "Admin,Lead")]
+        public IActionResult ShowDetails(int id)
+        {
+            //Default session with KeyValue
+            HttpContext.Session.SetInt32("DepartmentNo", id);
+            //Custom session with object
+            var dept = DeptServ.GetWithoutChildAsync(id).Result;
+            HttpContext.Session.SetObject<Dept>("Dept", dept);
+
+            return RedirectToAction("Index", "Employee");
         }
     }
 }

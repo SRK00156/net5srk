@@ -41,6 +41,16 @@ namespace Core_DataAccess_KalpeshSoliya.Services
 			return await ctx.Depts.Include(a => a.Emps).FirstOrDefaultAsync(i => i.DeptId == id); ;
 		}
 
+		public async Task<IEnumerable<Dept>> GetWithoutChildAsync()
+		{
+			return await ctx.Depts.ToListAsync();
+		}
+
+		public async Task<Dept> GetWithoutChildAsync(int id)
+		{
+			return await ctx.Depts.FirstOrDefaultAsync(i => i.DeptId == id); ;
+		}
+
 		public async Task<Dept> UpdateAsync(int id, Dept entity)
 		{
 			// 1 serach recorde

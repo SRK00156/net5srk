@@ -20,6 +20,7 @@ namespace Core_DataAccess_KalpeshSoliya.Models
         public virtual DbSet<Dept> Depts { get; set; }
         public virtual DbSet<Emp> Emps { get; set; }
         public virtual DbSet<LogTable> LogTables { get; set; }
+        public virtual DbSet<PolicyRoleMapping> PolicyRoleMappings { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -81,8 +82,6 @@ namespace Core_DataAccess_KalpeshSoliya.Models
 
                 entity.ToTable("LogTable");
 
-                entity.Property(e => e.LogId).ValueGeneratedNever();
-
                 entity.Property(e => e.ActioName).HasMaxLength(100);
 
                 entity.Property(e => e.ControllerName).HasMaxLength(100);
@@ -92,6 +91,25 @@ namespace Core_DataAccess_KalpeshSoliya.Models
                 entity.Property(e => e.ErrorMessage).HasMaxLength(100);
 
                 entity.Property(e => e.RequestDateTime).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<PolicyRoleMapping>(entity =>
+            {
+                entity.HasKey(e => e.PolicyId);
+
+                entity.ToTable("PolicyRoleMapping");
+
+                entity.Property(e => e.PolicyId).HasColumnName("policy_id");
+
+                entity.Property(e => e.PolicyName)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("policy_name");
+
+                entity.Property(e => e.RoleId)
+                    .IsRequired()
+                    .HasMaxLength(450)
+                    .HasColumnName("role_id");
             });
 
             OnModelCreatingPartial(modelBuilder);
