@@ -97,7 +97,7 @@ namespace Core_WebApp
 				options.IdleTimeout = TimeSpan.FromMinutes(20); // 20 minuts for Session Timeout
 			});
 			
-			
+			 
 			// Request Processing for ASP.NET Core 5 MVC Controllers with Views and API Controllers
 			services.AddControllersWithViews(options=> {
 				// Register the filter Globally
